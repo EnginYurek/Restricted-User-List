@@ -1,0 +1,4 @@
+output/contractData.json
+output/contracts.json
+js/privateVariables.js
+keyStore/keystore.json
