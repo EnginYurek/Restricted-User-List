@@ -6,7 +6,7 @@ var pv = require ("./privateVariables.js");
 var user = new User({name:"engin"});
 
 if (user.connect()){
-    
+
     user.getBlockNumber().then((blockNumber) => {
         console.log(blockNumber);
     }).catch((err) => (console.log(err)));
@@ -26,7 +26,7 @@ if (user.connect()){
         console.log("can not get balance: "+ ret)
     });
 
-    
+
     if (!user.isContractDeployed()){
 
         user.deployContract(account[0].address)
@@ -34,7 +34,7 @@ if (user.connect()){
         user.isUserExists("0xcaa56903094cb3798f78fd92adc83d32adc5cd97")
         .then(isExists => {
             if(!isExists){
-                
+
                 user.addUser("0xcaa56903094cb3798f78fd92adc83d32adc5cd97",1000);
             }else{
                 user.balanceOf("0xcaa56903094cb3798f78fd92adc83d32adc5cd97").
@@ -61,10 +61,7 @@ if (user.connect()){
                     console.log("Error: " + err);
                 })
             }
-            
-            });
+
+          });
     }
 }
-
-                                                                                                               
-

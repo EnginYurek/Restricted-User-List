@@ -5,9 +5,39 @@
     <title>"Hello world"</title>
 </head>
 <body>
-  <script>console.log(process.type)</script>
-    <p style="color:green">"Hello world"</p>
+  <script>console.log(location.pathname)</script>
+  <script src="./js/uiManipulator.js">
 
+  </script>
     <div>
+      <div>
+        <div>
+          <table id=table>
+              <tr>
+                <td width="50%"><p id="block_number"></p></td>
+                <td width="50%"><p id="eth_address"></p></td>
+              </tr>
+              <tr>
+                <td width="50%"><p id="eth_balance"></p></td>
+                <td width="50%"><p id="contract_address"></p></td>
+              </tr>
+              <tr>
+                <td>
+                  <div>
+                    <input type="text" name="fname" id="is_user_exist">
+                    <button id=is_user_exist_btn onclick="isUserExists()">Is User Exists</button>
+                  </div>
+                </td>
+                <td width="50%"><p id="token_balance"></p></td>
+              </tr>
+          </table>
+        </div>
+        <div id=deployButton>
+          <input type="text" name="fname" id="add_user">
+          <button id=add_user_btn onclick="addUserBtnHandler()">Add User</button>
+        </div>
+
+      </div>
+    </div>
 </body>
 </html>
