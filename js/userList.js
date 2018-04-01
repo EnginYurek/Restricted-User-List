@@ -126,6 +126,10 @@ User.prototype.getUserNumber = function (address) {
   return this.getContract().methods.getUserNumber(address).call();
 }
 
+User.prototype.getOwnerNumber = function () {
+  return this.getContract().methods.getOwnerNumber().call();
+}
+
 User.prototype.isUserExists = function(addr){
   return this.getContract().methods.isUserExists(addr).call();
 }
@@ -136,6 +140,11 @@ User.prototype.mintToken = function(balance){
 
 User.prototype.transfer = function(to,balance){
     return this.getContract().methods.transfer(to, balance).send({from:this.getAccount(pv.accountPass)[0].address ,gas:1000000, gasPrice: '20000000000'});
+}
+
+User.prototype.transferOwnership = function (address){
+  console.log("Transfer Ownership to " + address);
+    return this.getContract().methods.transferOwnership(address).send({from:this.getAccount(pv.accountPass)[0].address ,gas:1000000, gasPrice: '20000000000'});
 }
 
 User.prototype.addUser = async function(address, amount){
@@ -149,11 +158,6 @@ User.prototype.addUser = async function(address, amount){
     });
 }
 
-User.prototype.transfer = function(address, amount){
-    var contract = this.getContract();
-
-    return contract.methods.transfer(address, amount).send();
-}
 
 User.prototype.approve = function(address,amount) {
     var contract = this.getContract();

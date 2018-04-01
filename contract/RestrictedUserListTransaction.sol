@@ -64,8 +64,10 @@ contract RestrictedUserListTransaction is ERC20 {
     event OwnershipTransferred (address indexed previousOwner, address indexed newOwner);
     function transferOwnership (address newOwner) onlyOwner public {
         require (newOwner != address(0));
+        require (newOwner != owner);
+        address old_owner = owner;
         owner = newOwner;
-        OwnershipTransferred(owner, newOwner);
+        OwnershipTransferred(old_owner, newOwner);
     }
 
     //Minting related part
@@ -121,7 +123,7 @@ contract RestrictedUserListTransaction is ERC20 {
         userList[msg.sender].balance = userList[msg.sender].balance.sub(value);
         userList[to].balance = userList[to].balance.add(value);
         Transfer(msg.sender, to, value);
-        return true; 
+        return true;
    }
 
     /*if user already add spender than just increases the number
@@ -143,7 +145,7 @@ contract RestrictedUserListTransaction is ERC20 {
     }
 
     function transferFrom(address from, address to, uint256 value) public returns (bool) {
-        
+
         require(to != address(0));
         require(from != address(0));
         require(value <= userList[from].balance);
@@ -153,5 +155,5 @@ contract RestrictedUserListTransaction is ERC20 {
         userList[to].balance = userList[to].balance.add(value);
         userList[from].allowedAccounts[msg.sender] = userList[from].allowedAccounts[msg.sender].sub(value);
         return true;
-    }   
+    }
 }

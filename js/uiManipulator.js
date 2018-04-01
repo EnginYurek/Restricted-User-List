@@ -90,6 +90,11 @@ setTimeout(function(){
   user.getDecimals().then(ret => {document.getElementById("token_decimals").innerHTML = "Token Decimals: " + ret}).catch(ret =>{ console.log("Token Decimals Err: " + ret)})
 },20)
 
+setTimeout(function(){
+  user.getOwnerNumber().then(ret => {document.getElementById("owner_number").innerHTML = "Owner Number: " + ret}).catch(ret =>{ console.log("Owner Nmuber Err: " + ret)})
+},20)
+
+
 var contract = user.getContract();
 setTimeout(function(){
   console.log(contract.options.address);
@@ -152,6 +157,19 @@ function transferTo(){
   })
   .catch(ret => {
     console.log("Error transfer: ");
+    console.log(ret);
+  })
+}
+
+function transferOwnership(){
+  var address = document.getElementById("transfer_ownership_address").value;
+  user.transferOwnership(address)
+  .then(ret => {
+    console.log("Transfer ownership successfull");
+    console.log(ret);
+  })
+  .catch(ret => {
+    console.log("Trasfer ownership failed");
     console.log(ret);
   })
 }
