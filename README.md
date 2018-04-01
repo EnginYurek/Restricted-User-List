@@ -4,6 +4,7 @@ Add a personal password into privateVariables.js This password will encode your 
 
 ```
 npm init
+npm install
 ```
 ### Compile the contract
 ```
