@@ -206,8 +206,8 @@ function allowance(){
 }
 
 function transferFrom(){
-  var transfer_from_addr = document.getElementById("transfer_from").value;
-  var transfer_to_addr = document.getElementById("transfer_to").value;
+  var transfer_from_addr = document.getElementById("transfer_from_from").value;
+  var transfer_to_addr = document.getElementById("transfer_from_to").value;
   var transfer_from_amount = document.getElementById("transfer_from_amount").value;
   user.transferFrom(transfer_from_addr, transfer_to_addr, transfer_from_amount)
   .then(ret => {
