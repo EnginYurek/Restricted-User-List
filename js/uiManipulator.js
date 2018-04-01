@@ -61,6 +61,34 @@ setTimeout(function(){
   });
 },20);
 
+setTimeout(function(){
+  user.getTotalBalance()
+  .then((ret) => {
+    document.getElementById("total_balance").innerHTML = "Total token balance is: " + ret;
+    console.log("total balance is " + ret);
+  })
+  .catch((ret) => {
+    console.log("Can not get Total balance. Error: " + ret);
+  })
+},20);
+
+setTimeout(function(){
+  user.getSymbol()
+  .then (ret => {
+    document.getElementById("token_symbol").innerHTML = "Token symbol is: " + ret;
+  })
+  .catch(ret => {
+    console.log("Token symbol error " + ret);
+  })
+}, 20);
+
+setTimeout(function(){
+  user.getTokenName().then(ret => {document.getElementById("token_name").innerHTML = "Token Name: " + ret}).catch(ret =>{ console.log("Token Name Err: " + ret)})
+},20)
+
+setTimeout(function(){
+  user.getDecimals().then(ret => {document.getElementById("token_decimals").innerHTML = "Token Decimals: " + ret}).catch(ret =>{ console.log("Token Decimals Err: " + ret)})
+},20)
 
 var contract = user.getContract();
 setTimeout(function(){
@@ -91,3 +119,39 @@ function addUserBtnHandler(){
     }
   });
 };
+
+function mintToken(){
+  var token_balance = document.getElementById("mint_input").value;
+  user.mintToken(token_balance)
+  .then(ret =>{
+    console.log(ret);
+  })
+  .catch(ret => {
+    console.log("Err token Mint " + ret);
+  })
+}
+
+function getUserNumber(){
+  var user_number = document.getElementById("user_number").value;
+  user.getUserNumber(user_number)
+  .then(ret =>{
+    console.log(ret);
+  })
+  .catch(ret => {
+    console.log("Err token Mint " + ret);
+  })
+}
+
+function transferTo(){
+  var address = document.getElementById("transfer_to").value;
+  var amount = document.getElementById("transfer_amount").value;
+  user.transfer(address, amount)
+  .then(ret => {
+    console.log("Transfer Succesfull");
+    console.log(ret);
+  })
+  .catch(ret => {
+    console.log("Error transfer: ");
+    console.log(ret);
+  })
+}

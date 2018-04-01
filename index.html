@@ -22,6 +22,14 @@
                 <td width="50%"><p id="contract_address"></p></td>
               </tr>
               <tr>
+                <td width="50%"><p id="total_balance"></p></td>
+                <td width="50%"><p id="token_symbol"></p></td>
+              </tr>
+              <tr>
+                <td width="50%"><p id="token_name"></p></td>
+                <td width="50%"><p id="token_decimals"></p></td>
+              </tr>
+              <tr>
                 <td>
                   <div>
                     <input type="text" name="fname" id="is_user_exist">
@@ -30,13 +38,29 @@
                 </td>
                 <td width="50%"><p id="token_balance"></p></td>
               </tr>
+              <tr>
+                <td width="50%"><p id="mint_token"></p></td>
+                <td width="50%"><p id="token_decimals"></p></td>
+              </tr>
           </table>
         </div>
         <div id=deployButton>
           <input type="text" name="fname" id="add_user">
           <button id=add_user_btn onclick="addUserBtnHandler()">Add User</button>
         </div>
-
+        <div>
+            <input type="text" name="mint" id="mint_input">
+            <button id="mint_button" onClick="mintToken()">Mint</button>
+        </div>
+        <div>
+            <input type="text" name="user number" id="user_number">
+            <button id="mint_button" onClick="getUserNumber()">User Number</button>
+        </div>
+        <div>
+            <input type="text" name="transfer" id="transfer_to">
+            <input type="text" name="transfer amount" id="transfer_amount">
+            <button id="transfer_btn" onClick="transferTo()">Transfer</button>
+        </div>
       </div>
     </div>
 </body>

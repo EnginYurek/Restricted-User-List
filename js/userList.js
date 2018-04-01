@@ -104,9 +104,36 @@ User.prototype.balanceOf = function(addr){
     return contract.methods.balanceOf(addr).call();
 }
 
+User.prototype.getTotalBalance = function () {
+  return this.getContract().methods.getTotalBalance().call();
+}
+
+User.prototype.getSymbol = function () {
+  return this.getContract().methods.getSymbol().call();
+}
+
+User.prototype.getTokenName = function () {
+  return this.getContract().methods.getTokenName().call();
+}
+
+User.prototype.getDecimals = function () {
+  return this.getContract().methods.getDecimals().call();
+}
+
+User.prototype.getUserNumber = function (address) {
+  return this.getContract().methods.getUserNumber(address).call();
+}
+
 User.prototype.isUserExists = function(addr){
-    var contract = this.getContract();
-    return contract.methods.isUserExists(addr).call();
+  return this.getContract().methods.isUserExists(addr).call();
+}
+
+User.prototype.mintToken = function(balance){
+    return this.getContract().methods.mint(balance).send({from:this.getAccount(pv.accountPass)[0].address ,gas:1000000, gasPrice: '20000000000'});
+}
+
+User.prototype.transfer = function(to,balance){
+    return this.getContract().methods.transfer(to, balance).send({from:this.getAccount(pv.accountPass)[0].address ,gas:1000000, gasPrice: '20000000000'});
 }
 
 User.prototype.addUser = async function(address, amount){
