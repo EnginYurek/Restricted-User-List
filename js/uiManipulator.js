@@ -173,3 +173,49 @@ function transferOwnership(){
     console.log(ret);
   })
 }
+
+
+function approve(){
+  var address = document.getElementById("approve_address").value;
+  var amount = document.getElementById("approve_amount").value;
+  user.approve(address, amount)
+  .then(ret => {
+    console.log("Approved " + address + " with " + amount + " from " + account[0])
+    console.log(ret);
+  })
+  .catch(ret => {
+    console.log("Approve failed");
+    console.log(ret);
+  })
+}
+
+
+function allowance(){
+  var boss_address = document.getElementById("boss_address").value;
+  var spender_address = document.getElementById("spender_address").value;
+  user.allowance(boss_address, spender_address)
+  .then(ret => {
+    console.log(boss_address + " allows " + spender_address + " to spend " + ret);
+  })
+  .catch(ret => {
+    console.log("Allowance error");
+  })
+  .catch(ret =>{
+    console.log(ret);
+  })
+}
+
+function transferFrom(){
+  var transfer_from_addr = document.getElementById("transfer_from").value;
+  var transfer_to_addr = document.getElementById("transfer_to").value;
+  var transfer_from_amount = document.getElementById("transfer_from_amount").value;
+  user.transferFrom(transfer_from_addr, transfer_to_addr, transfer_from_amount)
+  .then(ret => {
+    console.log("Transfer From success");
+    console.log(ret);
+  })
+  .catch(ret => {
+    console.log("Transfer From error");
+    console.log(ret);
+  })
+}

@@ -147,6 +147,15 @@ User.prototype.transferOwnership = function (address){
     return this.getContract().methods.transferOwnership(address).send({from:this.getAccount(pv.accountPass)[0].address ,gas:1000000, gasPrice: '20000000000'});
 }
 
+User.prototype.approve = function (address, balance){
+  console.log("approve that " + address + " can spent " + balance +" tokens");
+    return this.getContract().methods.approve(address, balance).send({from:this.getAccount(pv.accountPass)[0].address ,gas:1000000, gasPrice: '20000000000'});
+}
+
+User.prototype.allowance = function(ownerAddress, spenderAddress){
+    return this.getContract().methods.allowance(ownerAddress, spenderAddress).call();
+}
+
 User.prototype.addUser = async function(address, amount){
     var contract = this.getContract();
     return web3.eth.sendTransaction({
@@ -158,19 +167,8 @@ User.prototype.addUser = async function(address, amount){
     });
 }
 
-
-User.prototype.approve = function(address,amount) {
-    var contract = this.getContract();
-    return contract.methods.approve(address, amount).send();
-}
-
-User.prototype.allowance = function(ownerAddress, spenderAddress){
-    var contract = this.getContract();
-    return contract.methods.allowance(ownerAddress, spenderAddress).call();
-}
-
-User.prototype.transferFrom = function() {
-
+User.prototype.transferFrom = function(from, to, amount) {
+    return this.getContract().methods.transferFrom(from, to, amount).send({from:this.getAccount(pv.accountPass)[0].address ,gas:1000000, gasPrice: '20000000000'});
 }
 
 const mkdirSync = function (dirPath) {
