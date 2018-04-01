@@ -12,6 +12,7 @@ function User (user) {
 }
 
 var web3 = new Web3();
+var accountFileParent = "./keyStore"
 var accountFile = "./keyStore/keystore.json";
 var deployedContractFile = "./output/deployedContract.json"
 var compiledContractFile = "./output/compiledContract.json"
@@ -32,6 +33,7 @@ User.prototype.hasAccount = function () {
 User.prototype.createAccount = function (password) {
     var keyStore = web3.eth.accounts.wallet.create(1).encrypt(password);
 
+    mkdirSync(accountFileParent);
     fs.writeFileSync(accountFile,
         JSON.stringify(keyStore,null,4),
         function(err){
@@ -165,4 +167,12 @@ User.prototype.allowance = function(ownerAddress, spenderAddress){
 
 User.prototype.transferFrom = function() {
 
+}
+
+const mkdirSync = function (dirPath) {
+  try {
+    fs.mkdirSync(dirPath)
+  } catch (err) {
+    if (err.code !== 'EEXIST') throw err
+  }
 }
