@@ -20,3 +20,5 @@ To be able to successfully deploy the contract, get some free ether from https:/
 ```
 electron .
 ```
+
+### Run Truffle Tests
