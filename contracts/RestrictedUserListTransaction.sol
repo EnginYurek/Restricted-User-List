@@ -10,8 +10,8 @@ contract RestrictedUserListTransaction is ERC20 {
 
     string public constant SYMBOL = "RULT";
     string public constant NAME = "Restricted UserList Transaction";
-    uint public constant DECIMALS = 18; 
-    
+    uint public constant DECIMALS = 18;
+
     address public owner;
 
     //number of registered users
@@ -36,7 +36,7 @@ contract RestrictedUserListTransaction is ERC20 {
     */
     function RestrictedUserListTransaction () public {
         owner = msg.sender;
-        numberOfUsers = 0;
+        numberOfUsers = 1;
         totalSupply = 100000000; //1 token states 1 kurus, in total 1 millon TL
         userIndex[numberOfUsers] = msg.sender;
         userList[msg.sender] = User(msg.sender, totalSupply, numberOfUsers);
@@ -60,11 +60,12 @@ contract RestrictedUserListTransaction is ERC20 {
     }
 
 
-    //Owner related part similar to Ownable contract in zepplin-solidity. 
+    //Owner related part similar to Ownable contract in zepplin-solidity.
     event OwnershipTransferred (address indexed previousOwner, address indexed newOwner);
     function transferOwnership (address newOwner) onlyOwner public {
         require (newOwner != address(0));
         require (newOwner != owner);
+        require(userList[newOwner].userNumber != 0);
         address old_owner = owner;
         owner = newOwner;
         OwnershipTransferred(old_owner, newOwner);
@@ -72,7 +73,7 @@ contract RestrictedUserListTransaction is ERC20 {
 
     //Minting related part
     event Mint(uint256 amount);
-    
+
     /*Total number of tokens are not limited.
       Owner of the contract is able to produce infinite token
       */
@@ -80,14 +81,14 @@ contract RestrictedUserListTransaction is ERC20 {
         totalSupply = totalSupply.add(amount);
         userList[owner].balance = userList[owner].balance.add(amount);
         Mint(amount);
-        return true; 
-    } 
+        return true;
+    }
 
     // may need to check if user was registered
     function getUserNumber(address addr) public view returns (uint256) {
         return userList[addr].userNumber;
     }
-    
+
     function isUserExists(address addr) public constant returns (bool) {
         return userList[addr].userNumber != 0;
     }
@@ -126,7 +127,7 @@ contract RestrictedUserListTransaction is ERC20 {
         return true;
    }
 
-    /*if user already add spender than just increases the number
+    /*if user already added spender than just increases the number
       if user does not has spender in his allowed account list than adds user to the list
     */
     function approve (address spender, uint256 value) public returns (bool) {
