@@ -6,10 +6,10 @@ Add a personal password into privateVariables.js This password will encode your 
 npm init
 npm install
 ```
-### Compile the contract
+### Compile the contracts
 ```
 mkdir output
-cd contract
+cd contracts
 solc RestrictedUserListTransaction.sol --combined-json abi,asm,ast,bin,bin-runtime,clone-bin,devdoc,interface,opcodes,srcmap,srcmap-runtime,userdoc > ../output/compiledContract.json
 cd ..
 ```
