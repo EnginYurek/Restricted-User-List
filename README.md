@@ -22,3 +22,9 @@ electron .
 ```
 
 ### Run Truffle Tests
+```
+truffle develop --log
+
+// run in separate termianl
+truffle test
+```
