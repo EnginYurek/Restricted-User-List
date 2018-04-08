@@ -5,3 +5,4 @@ commands
 node_modules/
 package-lock.json
 js/keystore.json
+*~
