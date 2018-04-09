@@ -44,6 +44,12 @@ contract('Get methods of contract initially', async (accounts) => {
     assert.isFalse(isUser, "User in in the list");
   });
 
+  it ("Should return true. Owner is the first user by default", async () => {
+    let isUser = await contract.isUserExists.call(accounts[0]);
+    assert.isBoolean(isUser, "Not a boolean");
+    assert.isTrue(isUser, "User in in the list");
+  });
+
   it ("Should return balance of an external account as zero", async () => {
     let balanceOf = await contract.balanceOf.call("0x6566f8cdcf847b16c0fbbd825f2e3021896f9ac6");
     assert.isNumber(balanceOf['c'][0], "Not a number");
@@ -74,4 +80,4 @@ contract('Get methods of contract initially', async (accounts) => {
     assert.isNumber(allowance['c'][0], "Not a number");
     assert.equal(allowance['c'][0], 0, "Allowance is zero initially");
   });
-})
+});
