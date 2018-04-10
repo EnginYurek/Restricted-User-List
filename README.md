@@ -23,6 +23,7 @@ electron .
 
 ### Run Truffle Tests
 ```
+npm install -g truffle
 truffle develop --log
 
 // run in separate termianl
