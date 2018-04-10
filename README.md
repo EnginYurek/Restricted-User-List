@@ -22,10 +22,9 @@ electron .
 ```
 
 ### Run Truffle Tests
+Install ganache by following http://truffleframework.com/docs/ganache/using
+
 ```
 npm install -g truffle
-truffle develop --log
-
-// run in separate termianl
 truffle test
 ```
