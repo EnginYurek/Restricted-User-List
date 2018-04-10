@@ -81,3 +81,76 @@ contract('Get methods of contract initially', async (accounts) => {
     assert.equal(allowance['c'][0], 0, "Allowance is zero initially");
   });
 });
+
+contract('Add User', async (accounts) => {
+
+//! TODO: Error cases is not handled yet. eg. Adding same user twice
+
+  let contract;
+  let isExists;
+  let userAddress = "0x6566f8cdcf847b16c0fbbd825f2e3021896f9ac6";
+  let userBalance = 10000;
+
+  let userAddress2 = "0x3cd7e5bdebcc2602080193862826c32034051fce"
+  let userBalance2 = 5000;
+
+  before(async () => {
+      let instance = await RULT.deployed();
+      contract = instance["contract"]
+
+      isExists = await contract.isUserExists.call(userAddress);
+
+      await  contract.addUser(userAddress, userBalance, {from: accounts[0],gas:1000000, gasPrice: '20000000000'});
+    });
+
+  it ("User does not exits initially", async () => {
+    assert.isFalse(isExists, "User is alreadyy added. Err...");
+  });
+
+  it ("User exits after addUser operation", async () => {
+    let isNewUserExists = await contract.isUserExists.call(userAddress);
+    assert.isTrue(isNewUserExists, "New user does not exits");
+  });
+
+  it ("User number is 2", async () => {
+    //user number 1 belongs to owner
+    let userNumber = await contract.getUserNumber.call(userAddress);
+    assert.equal(userNumber, 2, "User number is wrong");
+  });
+
+  it ("Token balance of first user is 1000", async () => {
+      let balanceOf = await contract.balanceOf.call(userAddress);
+      assert.equal(balanceOf, userBalance, "Balance is wrong");
+  });
+
+  it ("Total balance does not changed", async () => {
+    let totalBalance = await contract.getTotalBalance.call();
+    let balanceOfOwner = await contract.balanceOf.call(accounts[0]);
+    let balanceOfUser = await contract.balanceOf.call(userAddress);
+    assert.equal(totalBalance['c'][0], balanceOfOwner.toNumber() + balanceOfUser.toNumber(), "Balances mismatch");
+  });
+
+  it ("Add second user", async () => {
+    await  contract.addUser(userAddress2, userBalance2, {from: accounts[0],gas:1000000, gasPrice: '20000000000'});
+    let isNewUserExists = await contract.isUserExists.call(userAddress2);
+    assert.isTrue(isNewUserExists, "Second user does not added");
+  });
+
+  it ("User number of second user is 2", async () =>  {
+    let userNumber = await contract.getUserNumber.call(userAddress2);
+    assert.equal(userNumber, 3, "User number is wrong");
+  });
+
+  it ("Token balance of second user is 5000", async () => {
+    let balanceOf = await contract.balanceOf.call(userAddress2);
+    assert.equal(balanceOf, userBalance2, "Balance is wrong")
+  });
+
+  it ("Total balance does not changed", async () => {
+    let totalBalance = await contract.getTotalBalance.call();
+    let balanceOfOwner = await contract.balanceOf.call(accounts[0]);
+    let balanceOfUser1 = await contract.balanceOf.call(userAddress);
+    let balanceOfUser2 = await contract.balanceOf.call(userAddress2);
+    assert.equal(totalBalance['c'][0], balanceOfOwner.toNumber() + balanceOfUser1.toNumber() + balanceOfUser2.toNumber(), "Balances mismatch");
+  });
+});
