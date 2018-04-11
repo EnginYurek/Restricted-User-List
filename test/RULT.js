@@ -154,3 +154,46 @@ contract('Add User', async (accounts) => {
     assert.equal(totalBalance['c'][0], balanceOfOwner.toNumber() + balanceOfUser1.toNumber() + balanceOfUser2.toNumber(), "Balances mismatch");
   });
 });
+
+contract('Mint', async (accounts) => {
+
+  let contract;
+  let initialTotalBalance;
+  let initialOwnerBalance;
+  let mintAmount1 = 55000;
+  let mintAmount2 = 5;
+
+  before(async () => {
+      let instance = await RULT.deployed();
+      contract = instance["contract"];
+
+      initialTotalBalance = await contract.getTotalBalance.call();
+      initialOwnerBalance = await contract.balanceOf.call(accounts[0]);
+    });
+
+  it ("Total balance is equal to owner balance", async () => {
+    assert.equal(initialTotalBalance['c'][0], initialOwnerBalance['c'][0], "İnitial balances are mismatch");
+  });
+
+  it ("Total balance increases after first minting", async () => {
+    await  contract.mint(mintAmount1, {from: accounts[0],gas:1000000, gasPrice: '20000000000'});
+    let totalBalance = await contract.getTotalBalance.call();
+    assert.equal(totalBalance['c'][0], initialTotalBalance.toNumber() + mintAmount1, "Total balance does not increases after minting");
+  });
+
+  it ("Owner balance increases after first minting", async () => {
+    let ownerBalance = await contract.balanceOf.call(accounts[0]);
+    assert.equal(ownerBalance['c'][0], initialOwnerBalance.toNumber() + mintAmount1, "Owner balance does not increses after minting");
+  });
+
+  it ("Total balance increases after second minting", async () => {
+    await  contract.mint(mintAmount2, {from: accounts[0],gas:1000000, gasPrice: '20000000000'});
+    let totalBalance = await contract.getTotalBalance.call();
+    assert.equal(totalBalance['c'][0], initialTotalBalance.toNumber() + mintAmount1 + mintAmount2, "Total balance does not increases after minting");
+  });
+
+  it ("Owner balance increases after second minting", async () => {
+    let ownerBalance = await contract.balanceOf.call(accounts[0]);
+    assert.equal(ownerBalance['c'][0], initialOwnerBalance.toNumber() + mintAmount1 + mintAmount2, "Owner balance does not increses after minting");
+  });
+});
