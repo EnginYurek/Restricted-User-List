@@ -197,3 +197,76 @@ contract('Mint', async (accounts) => {
     assert.equal(ownerBalance['c'][0], initialOwnerBalance.toNumber() + mintAmount1 + mintAmount2, "Owner balance does not increses after minting");
   });
 });
+
+contract ('Transfer', async(accounts) => {
+
+  let contract;
+  let transferAmount01 = 243433;
+  let transferAmount12 = 100000;
+  let owner = accounts[0];
+  let receiver1 = accounts[1]; //is also sender2. sender1 is owner
+  let receiver2 = accounts[2];
+  let totalBalance;
+
+  before(async () => {
+      let instance = await RULT.deployed();
+      contract = instance["contract"];
+
+      totalBalance = await contract.getTotalBalance.call();
+
+      await  contract.addUser(receiver1, 0, {from: owner, gas:1000000, gasPrice: '20000000000'});
+      await  contract.addUser(receiver2, 0, {from: owner, gas:1000000, gasPrice: '20000000000'});
+    });
+
+  it ("Check initial states", async () => {
+    let receiverBalance1 = await contract.balanceOf.call(receiver1);
+    let receiverBalance2 = await contract.balanceOf.call(receiver2);
+    let ownerBalance = await contract.balanceOf.call(owner);
+
+    assert.equal(receiverBalance1['c'][0], 0, "Receiver 1 initially does not have 0 token");
+    assert.equal(receiverBalance2['c'][0], 0, "Receiver 2 initially does not have 0 token");
+    assert.equal(ownerBalance['c'][0], totalBalance['c'][0], "Owner balance has changed");
+  });
+
+  it ("Transfer the first amount", async () => {
+    await  contract.transfer(receiver1, transferAmount01, {from: owner ,gas:1000000, gasPrice: '20000000000'});
+    let ownerBalance = await contract.balanceOf.call(owner);
+
+    assert.equal(totalBalance['c'][0], ownerBalance['c'][0] + transferAmount01 , "Balances mismatch");
+  });
+
+  it ("First receiver balance is equal to first transfer amount", async () => {
+    let receiverBalance1 = await contract.balanceOf.call(receiver1);
+
+    assert.equal(receiverBalance1['c'][0], transferAmount01, "Transfer amount mismatch");
+  });
+
+  it ("Transfer the second amount", async () => {
+    await  contract.transfer(receiver2, transferAmount12, {from: receiver1 ,gas:1000000, gasPrice: '20000000000'});
+    let receiverBalance1 = await contract.balanceOf.call(receiver1);
+
+    assert.equal(receiverBalance1['c'][0], transferAmount01 - transferAmount12 , "Balances mismatch");
+  });
+
+  it ("Second receiver balance is equal to second transfer amount", async () => {
+    let receiverBalance2 = await contract.balanceOf.call(receiver2);
+
+    assert.equal(receiverBalance2['c'][0], transferAmount12, "Transfer amount mismatch");
+  });
+
+  it ("Remaining token amount of receiver1 after second transfer", async () => {
+    let receiverBalance1 = await contract.balanceOf.call(receiver1);
+    let receiverBalance2 = await contract.balanceOf.call(receiver2);
+
+    assert.equal(receiverBalance1['c'][0], transferAmount01 - receiverBalance2['c'][0], "Transfer amount mismatch");
+  });
+
+  it ("Total circulating amount of token should does not change", async () =>{
+    let receiverBalance1 = await contract.balanceOf.call(receiver1);
+    let receiverBalance2 = await contract.balanceOf.call(receiver2);
+    let ownerBalance = await contract.balanceOf.call(owner);
+
+    assert.equal(totalBalance['c'][0], receiverBalance1['c'][0] + receiverBalance2['c'][0] + ownerBalance['c'][0], "Total number of tokens are changed");
+  });
+
+});
