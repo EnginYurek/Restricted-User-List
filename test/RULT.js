@@ -3,6 +3,7 @@ const RULT = artifacts.require("RestrictedUserListTransaction");
 contract('Get methods of contract initially', async (accounts) => {
 
   let contract;
+  let testAddress = accounts[5];
   before(async () => {
       let instance = await RULT.deployed();
       contract = instance["contract"]
@@ -33,13 +34,13 @@ contract('Get methods of contract initially', async (accounts) => {
   });
 
   it ("Should return zero as user number", async () => {
-    let userNumber = await contract.getUserNumber.call("0x6566f8cdcf847b16c0fbbd825f2e3021896f9ac6");
+    let userNumber = await contract.getUserNumber.call(testAddress);
     assert.isNumber(userNumber['c'][0], "Not a number");
     assert.equal(userNumber, 0, "Non user accounts must not have user number");
   });
 
   it ("Should return user doesnt exists", async () => {
-    let isUser = await contract.isUserExists.call("0x6566f8cdcf847b16c0fbbd825f2e3021896f9ac6");
+    let isUser = await contract.isUserExists.call(testAddress);
     assert.isBoolean(isUser, "Not a boolean");
     assert.isFalse(isUser, "User in in the list");
   });
@@ -51,7 +52,7 @@ contract('Get methods of contract initially', async (accounts) => {
   });
 
   it ("Should return balance of an external account as zero", async () => {
-    let balanceOf = await contract.balanceOf.call("0x6566f8cdcf847b16c0fbbd825f2e3021896f9ac6");
+    let balanceOf = await contract.balanceOf.call(testAddress);
     assert.isNumber(balanceOf['c'][0], "Not a number");
     assert.equal(balanceOf, 0, "Balance is wrong")
   });
@@ -70,13 +71,13 @@ contract('Get methods of contract initially', async (accounts) => {
   });
 
   it ("Sould return allowed amount of token to spend with registered user", async () => {
-    let allowance = await contract.allowance.call(accounts[0], "0x6566f8cdcf847b16c0fbbd825f2e3021896f9ac6");
+    let allowance = await contract.allowance.call(accounts[0], testAddress);
     assert.isNumber(allowance['c'][0], "Not a number");
     assert.equal(allowance['c'][0], 0, "Allowance is zero initially");
   });
 
   it ("Sould return allowed amount of token to spend with unregistered user", async () => {
-    let allowance = await contract.allowance.call("0x6566f8cdcf847b16c0fbbd825f2e3021896f9ac6", accounts[0]);
+    let allowance = await contract.allowance.call(testAddress, accounts[0]);
     assert.isNumber(allowance['c'][0], "Not a number");
     assert.equal(allowance['c'][0], 0, "Allowance is zero initially");
   });
@@ -88,10 +89,10 @@ contract('Add User', async (accounts) => {
 
   let contract;
   let isExists;
-  let userAddress = "0x6566f8cdcf847b16c0fbbd825f2e3021896f9ac6";
+  let userAddress = accounts[1];
   let userBalance = 10000;
 
-  let userAddress2 = "0x3cd7e5bdebcc2602080193862826c32034051fce"
+  let userAddress2 = accounts[2];
   let userBalance2 = 5000;
 
   before(async () => {
@@ -136,14 +137,14 @@ contract('Add User', async (accounts) => {
     assert.isTrue(isNewUserExists, "Second user does not added");
   });
 
-  it ("User number of second user is 2", async () =>  {
+  it ("User number of second user is 3", async () =>  {
     let userNumber = await contract.getUserNumber.call(userAddress2);
-    assert.equal(userNumber, 3, "User number is wrong");
+    assert.equal(userNumber['c'][0], 3, "User number is wrong");
   });
 
   it ("Token balance of second user is 5000", async () => {
     let balanceOf = await contract.balanceOf.call(userAddress2);
-    assert.equal(balanceOf, userBalance2, "Balance is wrong")
+    assert.equal(balanceOf['c'][0], userBalance2, "Balance is wrong")
   });
 
   it ("Total balance does not changed", async () => {
@@ -350,5 +351,52 @@ contract ('approve', async(accounts) => {
         assert.equal(allowance['c'][0], approveBalance3, "Approve of first address is wrong");
         assert.equal(balanceOfAllower['c'][0], balanceOfAllower, "Balance of allower should not change");
         assert.equal(spenderBalance3['c'][0], balanceOfSpeder3, "Balance of spender2 should not change");
+    });
+});
+
+
+contract ('transferOwnership', async(accounts) => {
+
+  let contract;
+  let previousOwnerBalance;
+
+  let newOwnerNumber;
+  let newOwnerAddress = accounts[7];
+  let newOwnerBalance = 7777;
+
+  let testUserAddress = accounts[3];
+  let testUserBalance = 55;
+
+  before(async () => {
+      let instance = await RULT.deployed();
+      contract = instance["contract"];
+
+      previousOwnerBalance = await contract.balanceOf.call(accounts[1]);
+
+      await  contract.addUser(newOwnerAddress, newOwnerBalance, {from: accounts[0],gas:1000000, gasPrice: '20000000000'});
+      newOwnerNumber =  await contract.getUserNumber.call(newOwnerAddress);
+
+      await  contract.transferOwnership(newOwnerAddress, {from: accounts[0],gas:1000000, gasPrice: '20000000000'});
+
+    });
+
+    it ("Owner number is updated", async () => {
+      let ownerNumber = await contract.getOwnerNumber.call();
+      assert.equal(ownerNumber['c'][0], newOwnerNumber['c'][0], "Owner number does not updated");
+    });
+
+    it ("Balances are not changed", async () => {
+      let previousOwnerBalanceAfterTransfer = await contract.balanceOf.call(accounts[1]);
+      let newOwnerBalanceAfterTransfer = await contract.balanceOf.call(newOwnerAddress);
+
+      assert.equal(previousOwnerBalanceAfterTransfer['c'][0], previousOwnerBalance['c'][0], "Previous owner balance has changed");
+      assert.equal(newOwnerBalanceAfterTransfer['c'][0], newOwnerBalance, "New owner balance has changed");
+    });
+
+    it ("New owner is able to add users", async () =>{
+      await  contract.addUser(testUserAddress, testUserBalance, {from:newOwnerAddress ,gas:1000000, gasPrice: '20000000000'});
+      let userNumber =  await contract.getUserNumber.call(testUserAddress);
+
+      assert.equal(userNumber['c'][0], 3, "New owner can not add new users");
     });
 });
