@@ -270,3 +270,85 @@ contract ('Transfer', async(accounts) => {
   });
 
 });
+
+
+contract ('approve', async(accounts) => {
+  let contract;
+  let approveBalance1 = 1000;
+  let allowedAccount1 = accounts[1];
+
+  let approveBalance2 = 2000;
+  let allowedAccount2 = accounts[2];
+
+  //account 1 will approve account 2
+  let approveBalance3 = 5500;
+  let allowedAccount3 = accounts[2];
+
+  let allowance1;
+  let allowance2;
+  let allowance3;
+
+  let balanceOfAllower1;
+  let balanceOfAllower2;
+  let balanceOfSpeder1;
+  let balanceOfSpeder2;
+  let balanceOfSpeder3;
+
+  before(async () => {
+      let instance = await RULT.deployed();
+      contract = instance["contract"];
+
+      balanceOfAllower1 = await contract.balanceOf.call(accounts[0]);
+      balanceOfAllower2 = await contract.balanceOf.call(accounts[1]);
+      balanceOfSpeder1 = await contract.balanceOf.call(accounts[1]);
+      balanceOfSpeder2 = await contract.balanceOf.call(accounts[2]);
+      balanceOfSpeder3 = await contract.balanceOf.call(accounts[3]);
+
+      allowance1 = await contract.allowance.call(accounts[0], accounts[1]);
+      allowance2 = await contract.allowance.call(accounts[0], accounts[2]);
+      allowance3 = await contract.allowance.call(accounts[1], accounts[2]);
+    });
+
+    it ("İnitial allowances are zero", async () => {
+        assert.equal(allowance1['c'][0], 0, "Initial allowance does not zero");
+        assert.equal(allowance2['c'][0], 0, "Initial allowance does not zero");
+        assert.equal(allowance3['c'][0], 0, "Initial allowance does not zero");
+    });
+
+    it ("Approve of first address is successfull", async () => {
+        await  contract.approve(accounts[1], approveBalance1, {from: accounts[0] ,gas:1000000, gasPrice: '20000000000'});
+        let allowance = await contract.allowance.call(accounts[0], accounts[1]);
+
+        let balanceOfAllower = await contract.balanceOf.call(accounts[0]);
+        let spenderBalance1 = await contract.balanceOf.call(accounts[1]);
+
+        assert.equal(allowance['c'][0], approveBalance1, "Approve of first address is wrong");
+        assert.equal(balanceOfAllower['c'][0], balanceOfAllower1, "Balance of allower should not change");
+        assert.equal(spenderBalance1['c'][0], balanceOfSpeder1, "Balance of spender1 should not change");
+
+    });
+
+    it ("Approve of second address is successfull", async () => {
+        await  contract.approve(accounts[2], approveBalance2, {from: accounts[0] ,gas:1000000, gasPrice: '20000000000'});
+        let allowance = await contract.allowance.call(accounts[0], accounts[2]);
+
+        let balanceOfAllower = await contract.balanceOf.call(accounts[0]);
+        let spenderBalance2 = await contract.balanceOf.call(accounts[2]);
+
+        assert.equal(allowance['c'][0], approveBalance2, "Approve of second address is wrong");
+        assert.equal(balanceOfAllower['c'][0], balanceOfAllower1, "Balance of allower should not change");
+        assert.equal(spenderBalance2['c'][0], balanceOfSpeder2, "Balance of spender2 should not change");
+    });
+
+    it ("Approve firs address to second address", async () => {
+        await  contract.approve(accounts[2], approveBalance3, {from: accounts[1] ,gas:1000000, gasPrice: '20000000000'});
+        let allowance = await contract.allowance.call(accounts[1], accounts[2]);
+
+        let balanceOfAllower = await contract.balanceOf.call(accounts[1]);
+        let spenderBalance3 = await contract.balanceOf.call(accounts[2]);
+
+        assert.equal(allowance['c'][0], approveBalance3, "Approve of first address is wrong");
+        assert.equal(balanceOfAllower['c'][0], balanceOfAllower, "Balance of allower should not change");
+        assert.equal(spenderBalance3['c'][0], balanceOfSpeder3, "Balance of spender2 should not change");
+    });
+});

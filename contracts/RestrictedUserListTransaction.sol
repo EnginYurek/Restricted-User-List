@@ -128,10 +128,11 @@ contract RestrictedUserListTransaction is ERC20 {
    }
 
     /*if user already added spender than just increases the number
-      if user does not has spender in his allowed account list than adds user to the list
+      if user does not have spender in his allowed account list than adds user to the list
     */
     function approve (address spender, uint256 value) public returns (bool) {
         require(spender != address(0));
+        require(spender != msg.sender);
 
         userList[msg.sender].allowedAccounts[spender] = userList[msg.sender].allowedAccounts[spender].add(value);
         Approval(msg.sender, spender,  value);
